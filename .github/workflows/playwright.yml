@@ -1,0 +1,178 @@
+name: 🎭 Playwright Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      test_tag:
+        description: 'Test tag to run (e.g. @Smoke, @P0, @Regression)'
+        required: false
+        default: ''
+      browser:
+        description: 'Browser to run tests on'
+        required: false
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+
+env:
+  CI: true
+  NODE_VERSION: '20'
+
+jobs:
+  test:
+    name: 🧪 Run Tests (Shard ${{ matrix.shard }}/4)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      # ── Run tests with BLOB reporter for merging later ───────────────────────
+      # blob reporter generates raw binary files that merge-reports can process
+      # list reporter gives real-time console output
+      # We do NOT use html reporter here — that happens in the merge job
+
+      - name: 🧪 Run Playwright Tests (Shard ${{ matrix.shard }}/4)
+        run: |
+          if [ -n "${{ github.event.inputs.test_tag }}" ]; then
+            npx playwright test \
+              --shard=${{ matrix.shard }}/4 \
+              --project=${{ github.event.inputs.browser || 'chromium' }} \
+              --grep "${{ github.event.inputs.test_tag }}" \
+              --reporter=blob,list
+          else
+            npx playwright test \
+              --shard=${{ matrix.shard }}/4 \
+              --project=chromium \
+              --reporter=blob,list
+          fi
+        env:
+          BASE_URL: ${{ secrets.BASE_URL || 'https://www.saucedemo.com' }}
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME || 'standard_user' }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'secret_sauce' }}
+          NODE_TLS_REJECT_UNAUTHORIZED: '0'
+          IGNORE_HTTPS_ERRORS: 'true'
+
+      # ── Upload blob report ────────────────────────────────────────────────────
+      # blob-report/ is where Playwright writes blob files by default
+      # Each shard uploads its own blob artifact with a unique name
+      # merge job downloads ALL of them
+
+      - name: 📊 Upload Blob Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-shard-${{ matrix.shard }}
+          path: blob-report/
+          retention-days: 1
+
+      # ── Upload TTA report per shard ───────────────────────────────────────────
+      # TTA report is still generated per shard
+      # Each shard has its own TTA report available for download
+
+      - name: 📊 Upload TTA Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tta-report-shard-${{ matrix.shard }}
+          path: tta-report/
+          retention-days: 30
+
+      # ── Upload failure screenshots ────────────────────────────────────────────
+      - name: 📸 Upload Failure Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots-shard-${{ matrix.shard }}
+          path: test-results/**/*.png
+          retention-days: 7
+
+  # ─── Merge Reports Job ────────────────────────────────────────────────────────
+  merge-reports:
+    name: 📊 Merge Shard Reports
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      # ── Download all blob artifacts ───────────────────────────────────────────
+      # pattern: blob-report-shard-* downloads all 4 shard blobs
+      # They land in all-blob-reports/blob-report-shard-1/ etc.
+
+      - name: 📥 Download All Blob Reports
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-shard-*
+          merge-multiple: true
+
+      # ── Verify files exist before merging ────────────────────────────────────
+      # This step helps debug if merge fails — shows what was downloaded
+      - name: 🔍 List Downloaded Files
+        run: |
+          echo "Contents of all-blob-reports:"
+          ls -la all-blob-reports/ || echo "Directory is empty"
+          find all-blob-reports -name "*.zip" | head -20 || echo "No zip files found"
+
+      # ── Merge blob files into one HTML report ────────────────────────────────
+      - name: 📊 Merge HTML Reports
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      # ── Upload merged HTML report ─────────────────────────────────────────────
+      - name: 📤 Upload Merged HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-merged
+          path: playwright-report/
+          retention-days: 30
+
+      # ── Write summary ─────────────────────────────────────────────────────────
+      - name: 📋 Write Job Summary
+        if: always()
+        run: |
+          echo "## 🎭 Playwright Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 📊 Total Shards | 4 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🌐 Browser | Chromium |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔁 Retries | 2 |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📁 Download the merged report from Artifacts above." >> $GITHUB_STEP_SUMMARY

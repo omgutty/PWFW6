@@ -1,0 +1,79 @@
+src/
+├── api/
+│   ├── PostsApi.ts          ← domain API client
+│   └── index.ts
+│
+├── config/
+│   └── index.ts             ← single source of truth
+│
+├── fixtures/
+│   └── index.ts             ← all fixtures wired
+│
+├── modules/
+│   ├── LoginModule.ts       ← login/logout flows
+│   ├── ProductModule.ts     ← cart flows
+│   └── index.ts
+│
+├── pages/
+│   ├── LoginPage.ts
+│   ├── InventoryPage.ts
+│   ├── CartPage.ts
+│   └── index.ts
+│
+├── testdata/
+│   ├── users.json
+│   ├── products.json
+│   └── types.ts
+│
+├── tests/
+│   ├── login.spec.ts        ← UI login tests
+│   ├── inventory.spec.ts    ← UI inventory tests
+│   ├── api.spec.ts          ← pure API tests
+│   └── hybrid.spec.ts       ← combined patterns  ← NEW
+│
+└── utils/
+    ├── Logger.ts
+    ├── ApiHelper.ts
+    ├── WaitHelper.ts        ← NEW
+    ├── DataGenerator.ts     ← NEW
+    └── index.ts
+
+
+    Interview Answer — Hybrid Testing Architecture
+
+"Hybrid tests are the most efficient pattern in enterprise test automation. 
+The principle is simple — use the fastest mechanism to set up test state,
+ and use the most accurate mechanism to validate the outcome. 
+ API calls are typically 10 to 20 times faster than UI interactions for the same operation.
+  So for any test where the setup is not what is being tested, we use the API. 
+  For the assertion — the thing we are actually validating — we use whichever layer
+   gives us the most confidence. A test validating cart total would set up via API 
+   and assert via UI, because the cart total is a UI concern. A test validating that
+    filtering works correctly in the backend would use API for both setup and assertion.
+     We also use hybrid tests for contract testing — 
+     validating that API response shapes match our TypeScript interfaces,
+      which acts as an early warning system for breaking backend changes 
+      before they surface in UI test failures
+
+      blob reporter
+─────────────
+Output: binary .zip files in blob-report/ folder
+Purpose: raw data format designed specifically for merging
+Size: small per shard
+Use: intermediate format only, not human readable
+Command: --reporter=blob
+
+html reporter  
+─────────────
+Output: index.html + assets in playwright-report/ folder
+Purpose: human readable, opens in browser
+Size: larger, self-contained
+Use: final output after merging
+Command: --reporter=html
+
+merge-reports command
+─────────────────────
+Input:  blob files from multiple shards
+Output: one unified html report
+Works:  ONLY with blob input files
+Fails:  if given html files as input ← your original error
