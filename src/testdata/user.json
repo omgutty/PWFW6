@@ -1,0 +1,28 @@
+{
+  "ptaLive": [
+    {
+      "id": "pta-live-admin",
+      "role": "admin",
+      "username": "ca_admin",
+      "password": "ca@123"
+    }
+  ],
+
+  "ptaTest": [
+    {
+      "id": "pta-test-admin",
+      "role": "admin",
+      "username": "pta_admin",
+      "password": "pta@999"
+    }
+  ],
+
+  "pknLive": [
+    {
+      "id": "pkn-live-admin",
+      "role": "admin",
+      "username": "pkn_admin",
+      "password": "pkn@123"
+    }
+  ]
+}

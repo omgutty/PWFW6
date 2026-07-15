@@ -28,13 +28,13 @@ export interface AppConfig{
 // This eliminates the duplication problem we identified in the analysis.- Got it
 
 export const config:AppConfig={
-    baseUrl: process.env.BASE_URL ?? 'https://www.saucedemo.com',
-    apiBaseUrl: process.env.API_BASE_URL ?? 'https://www.saucedemo.com',
+    baseUrl: process.env.BASE_URL ?? 'http://172.23.8.12:8050/Home', //'https://www.saucedemo.com',
+    apiBaseUrl: process.env.API_BASE_URL ?? 'http://172.23.8.12:8050/Home',// 'https://www.saucedemo.com',
     apiTimeout: parseInt(process.env.API_TIMEOUT ?? '30000', 10),
     defaultTimeout: 30000,
     testUser: {
-        username: process.env.TEST_USERNAME ?? 'standard_user',
-        password: process.env.TEST_PASSWORD ?? 'secret_sauce',
+        username: process.env.TEST_USERNAME ?? 'ca_admin',//'standard_user',
+        password: process.env.TEST_PASSWORD ?? 'ca@123' //'secret_sauce',
     },
     logLevel: process.env.LOG_LEVEL ?? 'INFO',
 }

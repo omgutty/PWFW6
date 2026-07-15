@@ -34,6 +34,15 @@ export abstract class BasePage {
    }
 
 
+   // ─── Dropdown ────────────────────────────────────────────────────
+
+  async selectDropdownByLabel(locator: Locator, label: string): Promise<void> {
+    await locator.selectOption({ label });
+  }
+
+  async selectDropdownByValue(locator: Locator, value: string): Promise<void> {
+    await locator.selectOption({ value });
+  }
 }
 
 

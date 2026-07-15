@@ -20,6 +20,12 @@ export interface ValidUser {
     lastName: string;
     role: string;
 }
+export interface ptaValidUser {
+    id: string;
+    username: string;
+    password: string;
+    role: string;
+}
 
 export interface InvalidUser {
     username: string;
@@ -35,6 +41,7 @@ export interface LockedUser {
 
 //we import this in tests, UserData, 
 export interface UsersData {
+   
     validUsers: ValidUser[];
     invalidUsers: InvalidUser[];
     lockedUser: LockedUser;

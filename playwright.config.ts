@@ -50,7 +50,7 @@ export default defineConfig({
         baseURL: config.baseUrl,
         
         // Only capture evidence on failure — keep storage clean on passing runs
-        screenshot: 'only-on-failure',
+        screenshot: 'on',
         video: 'retain-on-failure',
         trace: 'retain-on-failure',
         
@@ -65,7 +65,7 @@ export default defineConfig({
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
         },
-        {
+        /**{
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
         },
@@ -76,6 +76,6 @@ export default defineConfig({
         {
             name: 'mobile-chrome',
             use: { ...devices['Pixel 5'] },
-        },
+        },*/
     ],
 });

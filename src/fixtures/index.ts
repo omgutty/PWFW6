@@ -1,14 +1,16 @@
 import {APIRequestContext, test as base, Page,request} from '@playwright/test';
 import { config } from '../config';
 //pages
-import { LoginPage ,CartPage,InventoryPage} from '../pages';
+import { SignInPage,LoginPage ,CartPage,InventoryPage} from '../pages';
 
 //modules
 import { LoginModule ,ProductModule} from '../modules';
+import { SignInModule } from '../modules/SignInModule';
 
 //api
 import { PostsApi } from '../api';
 import { LoginModule2 } from '../modules/LoginModule2';
+//import { SignInPage } from '../pages/SignInPage';
 
 // ─── TestFixtures Interface ──────────────────────────────────────────────────
 // This is the TYPE CONTRACT for all fixtures.
@@ -23,10 +25,12 @@ export type TestFixtures = {
     loginPage: LoginPage;
     inventoryPage: InventoryPage;
     cartPage: CartPage;
+    signInPage: SignInPage;
    
     loginModule: LoginModule;
     loginModule2:LoginModule2;
     productModule: ProductModule;
+    signinModule: SignInModule;
 
     postsApi: PostsApi;
     apiContext: APIRequestContext;
@@ -64,6 +68,9 @@ export const test = base.extend<TestFixtures>({
     },
     productModule: async ({ page }, use) => {
         await use(new ProductModule(page));
+    },
+    signinModule: async ({page}, use)=>{
+        await use(new SignInModule(page));
     },
 
     // ─── Standalone API context ───────────────────────────────────────────────
