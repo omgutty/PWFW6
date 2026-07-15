@@ -46,13 +46,7 @@ export class SignInPage extends BasePage{
         await this.LoginbuttonA().click();
         return new PSOPage(this.page);
     }
-    // async login(username:string, password:string):Promise<void>{
-        
-    //     await this.usernameInput.fill(username);
-    //     await this.passwordInput.fill(password);
-    //     await this.Loginbutton.click();
-    // }
-
+    
    async getErrorMessage(): Promise<string|null> {
     const errormessage = await this.errormessage().textContent();
     return errormessage;    

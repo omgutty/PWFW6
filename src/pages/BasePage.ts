@@ -22,7 +22,7 @@ export abstract class BasePage {
 
     // Get visible text from any element and return it
    async gettext(locator:Locator):Promise<string>{
-    return (await (locator.innerText())).trim()
+    return (await (locator.innerText())).trim();
    }
 
    // Get all texts from a list of elements — useful for table rows

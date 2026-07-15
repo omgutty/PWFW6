@@ -10,7 +10,8 @@ import usersRaw from '../testdata/user.json';
 test.describe('@P1 @Smoke  Signin tests',()=>{
     test('login with valid credentials', async ({signinModule})=>{
         await test.step('Login with valid credentials', async ()=>{
-           await signinModule.dologin(admin.username,admin.password);
+        const pasopage =  await signinModule.dologin(admin.username,admin.password);
+        expect(pasopage.fetchPSOPageLabel()).toContain("Approved Route Overview");     
         })
     });
 
