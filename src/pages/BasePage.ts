@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
-
+import { Header } from "../components/Header";
 // Already have this — click opens new tab, returns new Page
 
 export abstract class BasePage {
@@ -7,9 +7,11 @@ export abstract class BasePage {
   // private would block child classes from using it
   // public would expose it to tests — we never want that
   protected readonly page: Page;
+  readonly header: Header;
 
   constructor (page:Page){
     this.page= page;
+    this.header = new Header(page);
     }
 
   async goto(path: string): Promise<void> {

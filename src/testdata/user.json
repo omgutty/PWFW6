@@ -8,6 +8,15 @@
     }
   ],
 
+  "invalidUsers": [
+    {
+      "id": "invalid-1",
+      "role": "invalid",
+      "username": "ca_admin",
+      "password": "ca"
+    }
+  ],
+
   "ptaTest": [
     {
       "id": "pta-test-admin",

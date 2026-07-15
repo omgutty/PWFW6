@@ -9,7 +9,7 @@ import { SignInModule } from '../modules/SignInModule';
 
 //api
 import { PostsApi } from '../api';
-import { LoginModule2 } from '../modules/LoginModule2';
+
 //import { SignInPage } from '../pages/SignInPage';
 
 // ─── TestFixtures Interface ──────────────────────────────────────────────────
@@ -28,7 +28,7 @@ export type TestFixtures = {
     signInPage: SignInPage;
    
     loginModule: LoginModule;
-    loginModule2:LoginModule2;
+    
     productModule: ProductModule;
     signinModule: SignInModule;
 
@@ -57,9 +57,7 @@ export const test = base.extend<TestFixtures>({
     loginModule: async ({page},use)=>{
         await  use(new LoginModule(page));
     },
-    loginModule2: async ({page}, use )=>{
-        await use(new LoginModule2(page))
-    },
+  
     inventoryPage: async ({ page }, use) => {
         await use(new InventoryPage(page));
     },

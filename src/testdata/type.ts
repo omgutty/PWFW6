@@ -9,4 +9,5 @@ export interface UsersData {
     ptaLive: User[];
     ptaTest: User[];
     pknLive: User[];
+    invalidUsers: User[];
 }

@@ -20,11 +20,12 @@ export class SignInPage extends BasePage{
     usernameInputA= ()=>this.page.locator('#UserName');
     passwordInputA= ()=>this.page.locator('#Password');
     LoginbuttonA= ()=>this.page.getByRole('button', { name: 'Login' });
+    errormessage= ()=>this.page.getByText('The user name or password provided is incorrect.',{exact:true});
+    
 
      // ─── ACTIONS 
     async navigate(): Promise<void>{
-        await this.page.goto('/');// {waitUntil:'domcontentloaded'});
-        
+        await this.page.goto('/');
     }
 
      /**
@@ -52,7 +53,8 @@ export class SignInPage extends BasePage{
     //     await this.Loginbutton.click();
     // }
 
-
-    
-
+   async getErrorMessage(): Promise<string|null> {
+    const errormessage = await this.errormessage().textContent();
+    return errormessage;    
+}   
 }

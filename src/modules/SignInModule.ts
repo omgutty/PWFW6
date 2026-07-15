@@ -37,4 +37,20 @@ export class SignInModule {
 
         this.logger.testEnd('doLogin');
     }
+
+
+    async attemptInvalidLogin(username:string , password:string):Promise<string|null>{
+        this.logger.testStart('attemptInvalidLogin');
+
+        await this.siginpage.navigate();
+        await this.siginpage.enterusername(username);
+        await this.siginpage.enterpassword(password);
+        await this.siginpage.clickonLoginbutton();
+
+        // Assuming there's a method to get the error message from the SignInPage
+        const errorMessage = await this.siginpage.getErrorMessage(); // You need to implement this method in SignInPage
+        this.logger.info(`Error message received: ${errorMessage}`);
+        this.logger.testEnd('attemptInvalidLogin');
+        return errorMessage;
+    }   
 }
