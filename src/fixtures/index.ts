@@ -11,6 +11,7 @@ import { SignInModule } from '../modules/SignInModule';
 import { PostsApi } from '../api';
 
 //import { SignInPage } from '../pages/SignInPage';
+import { PSOModule } from '../modules/PSOModule';
 
 // ─── TestFixtures Interface ──────────────────────────────────────────────────
 // This is the TYPE CONTRACT for all fixtures.
@@ -21,19 +22,11 @@ import { PostsApi } from '../api';
 
 export type TestFixtures = {
     authenticatedPage: Page;
-
-    loginPage: LoginPage;
-    inventoryPage: InventoryPage;
-    cartPage: CartPage;
-    signInPage: SignInPage;
-   
-    loginModule: LoginModule;
-    
-    productModule: ProductModule;
-    signinModule: SignInModule;
-
     postsApi: PostsApi;
     apiContext: APIRequestContext;
+     //signInPage: SignInPage;
+    signinModule: SignInModule;
+    psomodule:PSOModule
     
 };
 
@@ -45,30 +38,20 @@ export const test = base.extend<TestFixtures>({
     // We don't create the page — we just wrap it in our Page Object.
     // The `use` callback receives the constructed object and passes it to the test.
 
-    loginPage: async ({page},use)=>{
-        // SETUP: construct the page object
-        const loginPageInstance = new LoginPage(page);
-        // USE: hand it to the test. Test runs here.
-        await use( loginPageInstance)  
-        // TEARDOWN: nothing needed — page cleanup is handled by Playwright's
-        // built-in page fixture automatically 
-    },
+    // loginPage: async ({page},use)=>{
+    //     // SETUP: construct the page object
+    //     const loginPageInstance = new LoginPage(page);
+    //     // USE: hand it to the test. Test runs here.
+    //     await use( loginPageInstance)  
+    //     // TEARDOWN: nothing needed — page cleanup is handled by Playwright's
+    //     // built-in page fixture automatically 
+    // },
 
-    loginModule: async ({page},use)=>{
-        await  use(new LoginModule(page));
-    },
-  
-    inventoryPage: async ({ page }, use) => {
-        await use(new InventoryPage(page));
-    },
-    cartPage: async ({ page }, use) => {
-        await use(new CartPage(page));
-    },
-    productModule: async ({ page }, use) => {
-        await use(new ProductModule(page));
-    },
     signinModule: async ({page}, use)=>{
         await use(new SignInModule(page));
+    },
+    psomodule:async({page},use)=>{
+        await use(new PSOModule(page));
     },
 
     // ─── Standalone API context ───────────────────────────────────────────────

@@ -1,17 +1,16 @@
 import {test, expect} from '../fixtures';
-import { UsersData } from '../testdata/type';
-import usersRaw from '../testdata/user.json';
+import { config } from '../config';
 
- const users = usersRaw as UsersData;
- const admin = users.ptaLive[0];
- const invaliduser= users.invalidUsers[0];
+ const admin = config.testUser;
+ const invaliduser = config.invalidUser;
 
 
 test.describe('@P1 @Smoke  Signin tests',()=>{
     test('login with valid credentials', async ({signinModule})=>{
         await test.step('Login with valid credentials', async ()=>{
         const pasopage =  await signinModule.dologin(admin.username,admin.password);
-        expect(pasopage.fetchPSOPageLabel()).toContain("Approved Route Overview");     
+        const label = await pasopage.fetchPSOPageLabel();
+        expect(label).toContain("Approved Route Overview");     
         })
     });
 

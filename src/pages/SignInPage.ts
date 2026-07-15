@@ -42,7 +42,7 @@ export class SignInPage extends BasePage{
         await this.passwordInputA().fill(password);
     }
 
-    async clickonLoginbutton(){
+    async clickonLoginbutton():Promise<PSOPage>{
         await this.LoginbuttonA().click();
         return new PSOPage(this.page);
     }

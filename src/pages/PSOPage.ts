@@ -1,5 +1,6 @@
 import { Page,expect } from "@playwright/test";
 import { BasePage } from "./BasePage";
+import { PSDPage } from './PSDPage';
 
 
 export class PSOPage extends BasePage{
@@ -30,8 +31,8 @@ export class PSOPage extends BasePage{
        return  await this.gettext(this.totaltargetnumber())
     }
 
-    async clickonfirstroute(){
+    async clickonfirstroute():Promise<PSDPage>{
         await this.firstroute().click();
-       // return new PSDPage(this.page);
+        return new PSDPage(this.page);
     }
 }

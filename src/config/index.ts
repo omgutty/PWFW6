@@ -18,6 +18,7 @@ export interface AppConfig{
     apiBaseUrl: string;
     apiTimeout: number;
     testUser: TestUser;
+    invalidUser: TestUser;
     logLevel: string;
     defaultTimeout: number;
 }
@@ -27,14 +28,26 @@ export interface AppConfig{
 // playwright.config.ts will import FROM here — not define its own values.
 // This eliminates the duplication problem we identified in the analysis.- Got it
 
-export const config:AppConfig={
-    baseUrl: process.env.BASE_URL ?? 'http://172.23.8.12:8050/Home', //'https://www.saucedemo.com',
-    apiBaseUrl: process.env.API_BASE_URL ?? 'http://172.23.8.12:8050/Home',// 'https://www.saucedemo.com',
+function requireEnv(name: string): string {
+    const value = process.env[name];
+    if (!value) {
+        throw new Error(`Missing required environment variable: ${name}. Check your .env file.`);
+    }
+    return value;
+}
+
+export const config: AppConfig = {
+    baseUrl: process.env.BASE_URL ?? 'http://172.23.8.12:8050/Home',
+    apiBaseUrl: process.env.API_BASE_URL ?? 'http://172.23.8.12:8050/Home',
     apiTimeout: parseInt(process.env.API_TIMEOUT ?? '30000', 10),
     defaultTimeout: 30000,
     testUser: {
-        username: process.env.TEST_USERNAME ?? 'ca_admin',//'standard_user',
-        password: process.env.TEST_PASSWORD ?? 'ca@123' //'secret_sauce',
+        username: requireEnv('TEST_USERNAME'),
+        password: requireEnv('TEST_PASSWORD'),
+    },
+    invalidUser: {
+        username: requireEnv('INVALID_USERNAME'),
+        password: requireEnv('INVALID_PASSWORD'),
     },
     logLevel: process.env.LOG_LEVEL ?? 'INFO',
 }

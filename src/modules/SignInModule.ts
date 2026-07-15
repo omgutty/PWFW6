@@ -26,7 +26,7 @@ export class SignInModule {
         this.logger.step(2, `enter username: ${username}`);
         await this.siginpage.enterusername(username);
         
-        this.logger.step(3, `enter password: ${password}`);
+        this.logger.step(3, `enter password: ***`);
         await this.siginpage.enterpassword(password);
 
         this.logger.step(4, 'Click login button');
