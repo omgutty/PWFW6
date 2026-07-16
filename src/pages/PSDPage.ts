@@ -7,4 +7,10 @@ export class PSDPage extends BasePage{
         super(page);
     }
 
+    psdpagelabel= ()=>this.page.locator('div.empty-box');
+    
+    async psdpagelabelloader():Promise<string|null> {
+        await expect(this.psdpagelabel()).toBeVisible();
+        return this.psdpagelabel().textContent()
+    }
 }

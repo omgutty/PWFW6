@@ -40,5 +40,10 @@ export class PSOModule {
         return await this.psopage.clickonfirstroute(); 
     }
 
+    async navigateToFirstRouteWithBuses():Promise<{routeName:string, psdPage:PSDPage}>{
+        this.logger.testStart('Navigating to first route with running buses');
+        this.logger.step(1, 'Check bus count, sort if needed, capture route name, and navigate to PSD');
+        return await this.psopage.clickOnRouteWithRunningBuses();
+    }
 
 }
