@@ -1,6 +1,6 @@
 import { Page, expect } from "@playwright/test";
-import { BasePage } from "./BasePage";
-import { PSDPage } from './PSDPage';
+import { BasePage, PSDPage, MapPage } from "../pages";
+
 
 export class PSOPage extends BasePage {
 
@@ -88,5 +88,37 @@ export class PSOPage extends BasePage {
     async clickonfirstroute(): Promise<PSDPage> {
         const { psdPage } = await this.clickOnRouteWithRunningBuses();
         return psdPage;
+    }
+
+    // ── Map navigation ─────────────────────────────────────────
+
+    /**
+     * Backward-compatible wrapper — clicks the map link and returns only MapPage.
+     */
+    async clickonfirstmap(): Promise<MapPage> {
+        const { mapPage } = await this.clickOnMapWithRunningBuses();
+        return mapPage;
+    }
+
+    /**
+     * Check bus count, click the map link of the first eligible route (opens
+     * a new tab), and return a MapPage scoped to that new tab.
+     */
+    async clickOnMapWithRunningBuses(): Promise<{ routeName: string; mapPage: MapPage }> {
+        const busCount = await this.fetchFirstRouteBusCount();
+
+        if (busCount <= 0) {
+            await this.sortByBusCountDescending();
+        }
+
+        const routeName = await this.fetchFirstRouteName();
+
+        const [newPage] = await Promise.all([
+            this.page.waitForEvent('popup'),
+            this.firstRouteMapLink().click(),
+        ]);
+
+        await newPage.waitForLoadState();
+        return { routeName, mapPage: new MapPage(newPage) };
     }
 }

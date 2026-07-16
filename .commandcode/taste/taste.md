@@ -44,7 +44,7 @@ See [architecture/taste.md](architecture/taste.md)
 
 # naming
 - Use verb-first method names: `enterUsername`, `clickLogin`, `fetchRunningBusCount`, `navigateToPSO`. Confidence: 0.85
-- Use barrel exports (`index.ts`) in every folder — consumers import from the folder, not individual files. Confidence: 0.80
+- Use barrel exports (`index.ts`) in every folder — consumers import from the folder, not individual files. Confidence: 0.85
 - Follow feature-based file naming: `{Feature}Page.ts`, `{Feature}Module.ts`, `{feature}.spec.ts`, `{Feature}Api.ts`. Confidence: 0.90
 - Prefer `fetch` prefix over `get` for async data retrieval methods (e.g., `fetchRunningBusCount` not `getRunningBusCount`). Confidence: 0.70
 

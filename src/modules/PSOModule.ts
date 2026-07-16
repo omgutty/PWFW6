@@ -1,20 +1,15 @@
 import { Page } from "@playwright/test";
-import { PSOPage } from '../pages';
+import { PSOPage, MapPage, PSDPage } from '../pages';
 import { Logger } from '../utils/Logger';
-import { PSDPage } from "../pages/PSDPage";
 
 export class PSOModule {
 
-    private page:Page;
-    //private siginpage:SignInPage;
-    private psopage:PSOPage
-    private logger:Logger;
+    private psopage: PSOPage;
+    private logger: Logger;
 
-    constructor(page:Page){
-        this.page=page;
-        //this.siginpage= new SignInPage(page);
-        this.psopage= new PSOPage(page);
-        this.logger= Logger.create('PSOModule ')
+    constructor(page: Page) {
+        this.psopage = new PSOPage(page);
+        this.logger = Logger.create('PSOModule ');
     }
 
     async getRunningBusCount():Promise<number>{
@@ -34,16 +29,16 @@ export class PSOModule {
         return parseInt(text,10);
     }
 
-    async navigatetoPSDfromPSO():Promise<PSDPage>{
+    async navigateToPSD(): Promise<{ routeName: string; psdPage: PSDPage }> {
         this.logger.testStart('Navigating PSD from PSO');
-        this.logger.step(1, 'Navigating to PSD');
-        return await this.psopage.clickonfirstroute(); 
-    }
-
-    async navigateToFirstRouteWithBuses():Promise<{routeName:string, psdPage:PSDPage}>{
-        this.logger.testStart('Navigating to first route with running buses');
         this.logger.step(1, 'Check bus count, sort if needed, capture route name, and navigate to PSD');
         return await this.psopage.clickOnRouteWithRunningBuses();
+    }
+
+    async navigateToMapView(): Promise<{ routeName: string; mapPage: MapPage }> {
+        this.logger.testStart('Navigating MapView from PSO');
+        this.logger.step(1, 'Check bus count, sort if needed, capture route name, and navigate to MapView');
+        return await this.psopage.clickOnMapWithRunningBuses();
     }
 
 }
