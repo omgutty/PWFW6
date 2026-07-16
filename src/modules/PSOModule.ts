@@ -1,5 +1,5 @@
 import { Page } from "@playwright/test";
-import { SignInPage, PSOPage } from '../pages';
+import { PSOPage } from '../pages';
 import { Logger } from '../utils/Logger';
 import { PSDPage } from "../pages/PSDPage";
 

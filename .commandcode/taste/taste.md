@@ -26,6 +26,7 @@ See [architecture/taste.md](architecture/taste.md)
 - Register every module as a fixture in `fixtures/index.ts` — tests should never call `new ModuleName(page)`. Confidence: 0.85
 - Name fixtures consistently: lowercase camelCase (e.g., `signinModule`, `psoModule`). Confidence: 0.85
 - Use an `authenticatedPage` fixture for tests that need a pre-logged-in state to avoid repeating login in every test. Confidence: 0.70
+- Provide separate authenticated module fixtures (e.g., `authenticatedPSOModule`) alongside plain module fixtures rather than baking login into the module fixture itself — tests choose which to inject. Confidence: 0.75
 
 # testing
 - Run tests with `--headed` flag when debugging to visually verify browser behavior during development. Confidence: 0.70

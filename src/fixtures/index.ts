@@ -1,10 +1,10 @@
 import {APIRequestContext, test as base, Page,request} from '@playwright/test';
 import { config } from '../config';
 //pages
-import { SignInPage,LoginPage ,CartPage,InventoryPage} from '../pages';
+import { SignInPage,LoginPage } from '../pages';
 
 //modules
-import { LoginModule ,ProductModule} from '../modules';
+
 import { SignInModule } from '../modules/SignInModule';
 
 //api
@@ -26,7 +26,9 @@ export type TestFixtures = {
     apiContext: APIRequestContext;
      //signInPage: SignInPage;
     signinModule: SignInModule;
-    psomodule:PSOModule
+    psomodule:PSOModule;
+    authenticatedPSOModule: PSOModule;
+   
     
 };
 
@@ -50,7 +52,13 @@ export const test = base.extend<TestFixtures>({
     signinModule: async ({page}, use)=>{
         await use(new SignInModule(page));
     },
-    psomodule:async({page},use)=>{
+    psomodule: async ({ page }, use) => {
+        await use(new PSOModule(page));
+    },
+
+    authenticatedPSOModule: async ({ page }, use) => {
+        const signInModule = new SignInModule(page);
+        await signInModule.dologin(config.testUser.username, config.testUser.password);
         await use(new PSOModule(page));
     },
 

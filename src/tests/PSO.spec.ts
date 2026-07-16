@@ -3,20 +3,21 @@ import { config } from '../config';
 
 const admin = config.testUser;
 
-test.describe('@P1 @Smoke Running bus count and total bus count test', ()=>{
-    test('Fetching the Running bus count and running bus count  from PSO Page',async({signinModule,psomodule})=>{
-       await signinModule.dologin(admin.username,admin.password);
-        const count=await psomodule.getRunningBusCount();
+test.describe('@P1 @Smoke Public service overview tests', ()=>{
+    test('Fetching the Running bus count and running bus count  from PSO Page',async({authenticatedPSOModule})=>{
+        const count=await authenticatedPSOModule.getRunningBusCount();
         expect(count).toBeGreaterThan(0);
-        const totalcount=await psomodule.getTargetBusCount();
+        const totalcount=await authenticatedPSOModule.getTargetBusCount();
         expect (totalcount).toBeGreaterThan(0);
     });
 
-    test('Navigate to PSD page from PSO',async ({signinModule,psomodule})=>{
-         await signinModule.dologin(admin.username,admin.password);
-         const psdpage =await psomodule.navigatetoPSDfromPSO()
-         expect (psdpage).toBeDefined()
-         //await psdpage.psdpagelabelloader();
+    test('Navigate to PSD page from PSO',async ({authenticatedPSOModule})=>{
+        const psdpage =await authenticatedPSOModule.navigatetoPSDfromPSO()
+        await expect(psdpage.psdpagelabel()).toBeVisible();
+    })
+
+    test('Navigate to MapView Page from PSO by click on Map', async ({authenticatedPSOModule})=>{
+        
     })
 
 
