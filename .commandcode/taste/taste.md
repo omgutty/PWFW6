@@ -49,7 +49,7 @@ See [architecture/taste.md](architecture/taste.md)
 - Prefer `fetch` prefix over `get` for async data retrieval methods (e.g., `fetchRunningBusCount` not `getRunningBusCount`). Confidence: 0.70
 
 # locators
-- Use arrow-function locators for lazy evaluation — locators are defined as functions (e.g., `const header = () => page.locator('.header')`) so they are resolved at action time, not definition time. Confidence: 0.85
+- Use arrow-function locators for lazy evaluation — locators are defined as functions (e.g., `const header = () => page.locator('.header')`) so they are resolved at action time, not definition time. Confidence: 0.88
 - Use self-healing locators for action-only operations (click, fill); assertions should use direct locators to fail fast on incorrect state. Confidence: 0.80
 
 # documentation

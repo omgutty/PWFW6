@@ -72,11 +72,14 @@ export const test = base.extend<TestFixtures>({
          */
         const psomodule= new PSOModule(page);
         await use(psomodule);
-        //Teardown
+        // Teardown
         const header=new Header(page);
         await header.logout();
         await page.close();
         
+    },
+    header: async ({ page }, use) => {
+        await use(new Header(page));
     },
 
     // ─── Standalone API context ───────────────────────────────────────────────
