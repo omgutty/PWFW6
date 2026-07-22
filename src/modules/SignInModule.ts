@@ -1,19 +1,15 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { Logger } from "../utils";
 import { SignInPage ,PSOPage} from "../pages";
-//import { PSOPage } from '../pages/PSOPage';
-//import { SignInPage } from '../pages/SignInPage';
 
 export class SignInModule {
     private page:Page;
     private siginpage:SignInPage;
-    //private psopage:PSOPage
     private logger:Logger;
 
     constructor (page:Page){
         this.page= page;
         this.siginpage= new SignInPage(page);
-        //this.psopage= new PSOPage(page);
         this.logger= Logger.create('Login Module')
     }
 
@@ -30,15 +26,10 @@ export class SignInModule {
         await this.siginpage.enterpassword(password);
 
         this.logger.step(4, 'Click login button');
-        return await this.siginpage.clickonLoginbutton();
-
-        // this.logger.step(5, 'Wait for navigation to PSO Page');
-        // const psolabel=await psopage.fetchPSOPageLabel()
-        // //expect(psolabel).toContain("Approved Route Overview")
+        const psopage = await this.siginpage.clickonLoginbutton();
 
         this.logger.testEnd('doLogin');
-        // return psolabel;
-        
+        return psopage;
     }
 
 
@@ -50,8 +41,7 @@ export class SignInModule {
         await this.siginpage.enterpassword(password);
         await this.siginpage.clickonLoginbutton();
 
-        // Assuming there's a method to get the error message from the SignInPage
-        const errorMessage = await this.siginpage.getErrorMessage(); // You need to implement this method in SignInPage
+        const errorMessage = await this.siginpage.getErrorMessage();
         this.logger.info(`Error message received: ${errorMessage}`);
         this.logger.testEnd('attemptInvalidLogin');
         return errorMessage;

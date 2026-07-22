@@ -1,20 +1,13 @@
-import { Page, Locator } from "@playwright/test";
+import { Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
 import { PSOPage } from "./PSOPage";
 
 
 export class SignInPage extends BasePage{
 
-    // private usernameInput:Locator;
-    // private passwordInput:Locator;
-    // private Loginbutton:Locator;
-
-
     constructor (page:Page){
         super(page);
-        // this.usernameInput=  page.locator('#UserName');
-        // this.passwordInput= page.locator('#Password');
-        // this.Loginbutton=  page.getByRole('button', { name: 'Login' })
+     
     }
 
     usernameInputA= ()=>this.page.locator('#UserName');

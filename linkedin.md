@@ -102,23 +102,69 @@ What's your take on credential management in test automation?
 
 ---
 
-> *Next entry template:*
->
-> ## YYYY-MM-DD
->
-> ### What We Implemented
-> -
->
-> ### Challenges & Solutions
-> -
->
-> ### What We Learned
-> -
->
-> ### Architecture Decisions
-> -
->
-> ### LinkedIn Post
-> ```
->
-> ```
+## 2026-07-16
+
+### What We Implemented
+
+- Fixed `firstroute` locator — was pointing to Diagrammatic Map column (2nd), now targets Approved Route (3rd) scoped to `#detail-container`
+- Added `clickOnRouteWithRunningBuses()` — checks bus count first, sorts descending via double-click on No. of Buses header if first route has 0, then clicks through to PSD
+- Added `clickOnMapWithRunningBuses()` — same smart check, clicks map link which opens a new tab, returns MapPage scoped to that tab
+- Built `MapPage` for the Timetable Adherence / MapView page (map link opens `target="_blank"`)
+- Added `authenticatedPSOModule` fixture that auto-logs in — tests no longer inject `signinModule` and call `dologin()` manually
+- Consolidated 4 redundant module methods into 2: `navigateToPSD()` and `navigateToMapView()` — both return `{routeName, page}` for optional verification downstream
+- All pages now exported via barrel (`src/pages/index.ts`) — imports are clean, no direct file paths
+- Cleaned up dead `private page`, `private mapPage` fields from PSOModule
+- All 3 PSO tests passing at 100%
+
+### Challenges & Solutions
+
+| Challenge | Solution |
+|-----------|----------|
+| First PSO route might have 0 running buses — clicking a dead route wastes test time | `clickOnRouteWithRunningBuses()` reads bus count first; if <= 0, double-clicks No. of Buses header to sort descending |
+| Map link opens a new tab — need to track both pages | `Promise.all([waitForEvent('popup'), click()])` captures the new page synchronously |
+| Every test repeated `signinModule.dologin()` before using PSO | `authenticatedPSOModule` fixture bakes login into fixture setup — tests just destructure what they need |
+
+### What We Learned
+
+1. **Smart navigation methods** — A method like `clickOnRouteWithRunningBuses()` that checks preconditions (bus count > 0) before acting eliminates flaky test assumptions. The same pattern applies to any data-dependent click.
+
+2. **New tab handling** — `page.waitForEvent('popup')` must be registered *before* the click, then `await Promise.all(...)` guarantees both the click and the new tab resolve together. The new page gets its own `MapPage` wrapper with an independent page object.
+
+3. **Fixture-as-login** — When a page is only accessible post-login, baking auth into the fixture removes boilerplate from every test. `authenticatedPSOModule` is the canonical example: PSO is the dashboard, you're never there without being logged in.
+
+### Architecture Decisions
+
+| Decision | Old Approach | New Approach | Reason |
+|----------|-------------|--------------|--------|
+| Route selection | Blindly clicked first route | Check bus count, sort if zero, then click | Data-driven navigation — no wasted clicks |
+| Map tab management | N/A | `waitForEvent('popup')` + new `MapPage` | Clean separation — tests don't manage browser tabs |
+| Fixture login | Test calls `signinModule.dologin()` | `authenticatedPSOModule` bakes login in | One less import per test, one less thing to forget |
+| New page flow | N/A | Return `{ routeName, page }` from navigation methods | Caller destructures what they need — optional verification |
+
+### LinkedIn Post
+
+```
+Two patterns that changed how I think about Playwright test design:
+
+1. Don't click blindly — check preconditions first
+In a dashboard with data rows, some rows have zero active data.
+Clicking them is wasted time. Now we read a key metric from the
+first row, sort the table if needed so the best row is on top,
+then click. One precondition check eliminates flaky assumptions
+from every test.
+
+2. Push auth into fixtures, not tests
+When a page is only accessible after login, every test shouldn't
+have to repeat the login call. Baking authentication into a fixture
+means tests destructure what they need and start acting immediately.
+Less boilerplate, same coverage, zero chance of forgetting to log in.
+
+Also handled new-tab navigation (register the popup listener before
+the click, not after), removed redundant method wrappers, and kept
+the import surface clean.
+
+3 tests. 100% pass. But the real outcome is a framework where
+tests describe intent, not infrastructure.
+
+#Playwright #TestAutomation #SDET #TypeScript #QualityEngineering
+```

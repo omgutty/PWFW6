@@ -52,6 +52,15 @@ See [architecture/taste.md](architecture/taste.md)
 - Use arrow-function locators for lazy evaluation — locators are defined as functions (e.g., `const header = () => page.locator('.header')`) so they are resolved at action time, not definition time. Confidence: 0.85
 - Use self-healing locators for action-only operations (click, fill); assertions should use direct locators to fail fast on incorrect state. Confidence: 0.80
 
+# documentation
+- For LinkedIn posts and learning logs: describe issues, solutions, and lessons learned at a high level — do not include function names, module names, or project-specific implementation details. Confidence: 0.70
+
 # assertions
 - Use locator assertions (`expect(locator).toBeVisible()`) directly in tests, not wrapped in page methods (unless reused across multiple tests). Confidence: 0.85
 - Use `toContain` for partial text match and `toHaveText` for exact match. Confidence: 0.85
+
+# fixtures
+- Handle logout in fixture teardown (after `await use(...)`) rather than requiring each test to call logout explicitly — fixtures that own login should own logout too. Confidence: 0.75
+
+# architecture
+- In Header components with hover-dropdown sub-menus, use a single `navigateToSubModule(mainMenu, subMenu)` method that hovers the main menu item then clicks the sub-menu item, rather than requiring separate hover and click steps. Confidence: 0.75

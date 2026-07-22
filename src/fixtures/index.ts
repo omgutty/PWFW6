@@ -12,6 +12,7 @@ import { PostsApi } from '../api';
 
 //import { SignInPage } from '../pages/SignInPage';
 import { PSOModule } from '../modules/PSOModule';
+import { Header } from '../components/Header';
 
 // ─── TestFixtures Interface ──────────────────────────────────────────────────
 // This is the TYPE CONTRACT for all fixtures.
@@ -28,6 +29,7 @@ export type TestFixtures = {
     signinModule: SignInModule;
     psomodule:PSOModule;
     authenticatedPSOModule: PSOModule;
+    header:Header;
    
     
 };
@@ -59,7 +61,22 @@ export const test = base.extend<TestFixtures>({
     authenticatedPSOModule: async ({ page }, use) => {
         const signInModule = new SignInModule(page);
         await signInModule.dologin(config.testUser.username, config.testUser.password);
-        await use(new PSOModule(page));
+        /**
+         * 1. new PSOModule(page) is stored in a variable
+              before use(), so the test gets it. Previously it
+              was inlined inside use() — same behavior either way.
+           2. page.header doesn't exist on Playwright's raw
+              Page object (it's only on BasePage subclasses). So
+              teardown creates a Header instance directly —
+              already imported at the top of the file
+         */
+        const psomodule= new PSOModule(page);
+        await use(psomodule);
+        //Teardown
+        const header=new Header(page);
+        await header.logout();
+        await page.close();
+        
     },
 
     // ─── Standalone API context ───────────────────────────────────────────────
