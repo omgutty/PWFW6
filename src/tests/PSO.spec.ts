@@ -1,7 +1,7 @@
 import{test,expect} from '../fixtures'
 import { config } from '../config';
 
-const admin = config.testUser;
+//const admin = config.testUser;
 
 test.describe('@P1 @Smoke Public service overview tests', ()=>{
     

@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 import { PSOPage, MapPage, PSDPage } from '../pages';
-import { Logger } from '../utils/Logger';
+import { Logger } from '../utils';
 
 export class PSOModule {
 
